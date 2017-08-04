@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.lsh.base.data.bean"><!-- 这里的package记得要写对啊。要不然运行也会出错的 -->
+    <class name="Cusarticle" table="item_cusar"><!-- 如果表名跟类名一个样的话，那么table属性可以不写 -->
+        <id name="id" >
+            <column name="id"/>
+            <generator class="identity"/>
+        </id>
+        <property name="skuId" column="sku_id"/>
+        <property name="mandt" column="mandt"/>
+        <property name="vkorg" column="vkorg"/>
+        <property name="vtweg" column="vtweg"/>
+        <property name="kunnr" column="kunnr"/>
+        <property name="kdmat" column="kdmit"/>
+        <property name="kdptx" column="kdptx"/>
+        <property name="kbetr" column="kbetr"/>
+        <property name="mmsta" column="mmsta"/>
+    </class>
+</hibernate-mapping>
+        

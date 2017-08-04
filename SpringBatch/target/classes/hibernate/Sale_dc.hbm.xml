@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.lsh.base.data.bean"><!-- 这里的package记得要写对啊。要不然运行也会出错的 -->
+    <class name="SaleDc" table="item_dc_sale" dynamic-insert="true" dynamic-update="true" ><!-- 如果表名跟类名一个样的话，那么table属性可以不写 -->
+        <id name="id" >
+            <column name="id"/>
+            <generator class="identity"/>
+        </id>
+        <property name="skuId" column="sku_id"/>
+        <property name="marketId" column="market_id"/>
+        <property name="supNo" column="sup_no"/>
+        <property name="netPrice" column="net_price"/>
+        <property name="minQty" column="min_qty"/>
+        <property name="maxQty" column="max_qty"/>
+        <property name="refundable" column="refundable"/>
+        <property name="dueDay" column="due_day"/>
+        <property name="unit" column="unit"/>
+        <property name="properties" column="properties" type="text"/>
+        <property name="isValid" column="is_valid"/>
+        <property name="effectedAt" column="effected_at"/>
+        <property name="endAt" column="end_at"/>
+        <property name="createAt" column="created_at"/>
+        <property name="updateAt" column="updated_at"/>
+        <property name="status" column="status"/>
+    </class>
+</hibernate-mapping>
+        

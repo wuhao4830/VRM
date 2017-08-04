@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<import resource="data-source-context-mysql.xml"/>
+	<import resource="data-source-context-sqlserver.xml"/>
+
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:batch-mysql.properties</value>
+				<value>classpath:batch-sqlserver.properties</value>
+				<value>classpath:redis.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="jobLauncher"
+		  class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+		<property name="jobRepository" ref="jobRepository" />
+	</bean>
+
+	<bean id="jobRepository" class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean">
+		<property name="transactionManager" ref="transactionManager"/>
+	</bean>
+
+	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager" lazy-init="true">
+		<property name="dataSource" ref="mysql-dataSource" />
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+
+	<bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="maxIdle" value="300" />
+		<property name="maxActive" value="600" />
+		<property name="maxWait" value="1000" />
+		<property name="testOnBorrow" value="true" />
+	</bean>
+	<bean id="redisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate">
+		<property name="connectionFactory"   ref="connectionFactory" />
+	</bean>
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate" abstract="false" lazy-init="false" autowire="default" >
+		<property name="dataSource" ref="mysql-dataSource"/>
+	</bean>
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="mysql-dataSource" />
+		<property name="mappingResources">
+			<list>
+				<value>hibernate/Article.hbm.xml</value>
+				<value>hibernate/Sale.hbm.xml</value>
+				<value>hibernate/SiteArticle.hbm.xml</value>
+				<value>hibernate/CusarArticle.hbm.xml</value>
+				<value>hibernate/Supplier.hbm.xml</value>
+				<value>hibernate/SaleUpdate.hbm.xml</value>
+				<value>hibernate/Site.hbm.xml</value>
+				<value>hibernate/Delivery.hbm.xml</value>
+				<value>hibernate/Sale_dc.hbm.xml</value>
+				<value>hibernate/BarcodeItem.hbm.xml</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<!-- JDBC connection pool (use the built-in) -->
+				<prop key="connection.pool_size">50</prop>
+				<!-- 设置Hibernate方言 -->
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<!-- 是否打印sql -->
+				<prop key="hibernate.show_sql">false</prop>
+				<!-- 格式化sql -->
+				<prop key="hibernate.format_sql">true</prop>
+				<!-- 是否自动更新表 -->
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.current_session_context_class">thread</prop>
+				<!-- 最大抓取深度，如果为0，则关闭默认的外连接抓取。建议值为0-3 -->
+				<prop key="hibernate.max_fetch_depth">1</prop>
+				<!-- 用于生成有助于调试的注释信息，默认为关闭 -->
+				<prop key="hibernate.use_sql_comments">true</prop>
+			</props>
+		</property>
+	</bean>
+
+
+</beans>

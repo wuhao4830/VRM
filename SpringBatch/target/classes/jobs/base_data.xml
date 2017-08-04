@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:batch="http://www.springframework.org/schema/batch"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd">
+
+	<import resource="classpath:job-launcher-context.xml"/>
+	<bean id="articleReader" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="sqlserver-dataSource"/>
+		<property name="sql" value="select * from M_V_ARTICLE"/>
+		<property name="verifyCursorPosition" value="1"/>
+		<property name="rowMapper">
+			<bean class="com.lsh.base.data.internal.ArticleRowMapper"/>
+		</property>
+	</bean>
+
+	<!--<bean id="fileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">-->
+		<!--<property name="linesToSkip" value="1" />-->
+		<!--<property name="resource" value="classpath:data/commodity_version.tsv" />-->
+		<!--<property name="lineMapper">-->
+			<!--<bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">-->
+				<!--<property name="lineTokenizer">-->
+					<!--<bean class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">-->
+						<!--<property name="delimiter" value="~!@#$%^*()" />-->
+						<!--<property name="names">-->
+							<!--<list>-->
+								<!--<value>value</value>-->
+							<!--</list>-->
+						<!--</property>-->
+					<!--</bean>-->
+				<!--</property>-->
+				<!--<property name="fieldSetMapper">-->
+					<!--<bean class="com.lsh.base.data.internal.SkuFieldSetMapper" />-->
+				<!--</property>-->
+			<!--</bean>-->
+		<!--</property>-->
+	<!--</bean>-->
+	<!--<bean id="ugroupUpdateItemReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">-->
+		<!--<property name="resource" value="classpath:data/out.txt" />-->
+		<!--<property name="lineMapper">-->
+			<!--<bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">-->
+				<!--<property name="lineTokenizer">-->
+					<!--<bean class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">-->
+						<!--<property name="delimiter" value="~!@#$%^*()" />-->
+						<!--<property name="names">-->
+							<!--<list>-->
+								<!--<value>value</value>-->
+							<!--</list>-->
+						<!--</property>-->
+					<!--</bean>-->
+				<!--</property>-->
+				<!--<property name="fieldSetMapper">-->
+					<!--<bean class="com.lsh.base.data.internal.UgroupFieldSetMapper" />-->
+				<!--</property>-->
+			<!--</bean>-->
+		<!--</property>-->
+	<!--</bean>-->
+	<!--<bean id="packSizeFileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">-->
+		<!--<property name="resource" value="classpath:data/tmp_product.txt" />-->
+		<!--<property name="lineMapper">-->
+			<!--<bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">-->
+				<!--<property name="lineTokenizer">-->
+					<!--<bean class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">-->
+						<!--<property name="delimiter" value="~!@#$%^*()" />-->
+						<!--<property name="names">-->
+							<!--<list>-->
+								<!--<value>value</value>-->
+							<!--</list>-->
+						<!--</property>-->
+					<!--</bean>-->
+				<!--</property>-->
+				<!--<property name="fieldSetMapper">-->
+					<!--<bean class="com.lsh.base.data.internal.PackSizeFieldSetMapper" />-->
+				<!--</property>-->
+			<!--</bean>-->
+		<!--</property>-->
+	<!--</bean>-->
+
+	<bean id="deliveryReader" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="sqlserver-dataSource"/>
+		<property name="sql" value="select * from m_v_rep_zkucundelivery"/>
+		<property name="verifyCursorPosition" value="1"/>
+		<property name="rowMapper">
+			<bean class="com.lsh.base.data.internal.DeliveryRowMapper"/>
+		</property>
+	</bean>
+	<bean id="barcodeReader" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="sqlserver-dataSource"/>
+		<property name="sql" value="select MATNR, MANDT, EAN11 from m_v_mean"/>
+		<property name="verifyCursorPosition" value="1"/>
+		<property name="rowMapper">
+			<bean class="com.lsh.base.data.internal.BarcodeItemRowMapper"/>
+		</property>
+	</bean>
+	<bean id="delBarcodeReader" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="mysql-dataSource"/>
+		<property name="sql" value="select* from item_barcode_info where is_valid = 1"/>
+		<property name="verifyCursorPosition" value="1"/>
+		<property name="rowMapper">
+			<bean class="com.lsh.base.data.internal.DelBarcodeItemRowMapper"/>
+		</property>
+	</bean>
+	<bean id="venderReader" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="sqlserver-dataSource"/>
+		<property name="sql" value="select * from m_v_vender"/>
+		<property name="verifyCursorPosition" value="1"/>
+		<property name="rowMapper">
+			<bean class="com.lsh.base.data.internal.DeliveryRowMapper"/>
+		</property>
+	</bean>
+
+	<bean id="saleParamReader" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="sqlserver-dataSource"/>
+		<property name="sql" value="select * from M_V_UKZ_MMSTA "/>
+		<property name="verifyCursorPosition" value="1"/>
+		<property name="rowMapper">
+			<bean class="com.lsh.base.data.internal.SaleUpdateRowMapper"/>
+		</property>
+	</bean>
+	<!--<bean id="saleReader" class="org.springframework.batch.item.database.JdbcCursorItemReader">-->
+		<!--<property name="dataSource" ref="sqlserver-dataSource"/>-->
+		<!--<property name="sql" value="select distinct a.* from m_eina as a inner join M_V_SITEARTICLE as b on a.MANDT = b.MANDT and a.MATNR = b.MATNR and a.lifnr = b.lifnr where a.matnr in (select distinct matnr from m_v_ukz_mmsta)"/>-->
+		<!--<property name="verifyCursorPosition" value="1"/>-->
+		<!--<property name="rowMapper">-->
+			<!--<bean class="com.lsh.base.data.internal.SaleRowMapper"/>-->
+		<!--</property>-->
+	<!--</bean>-->
+	<bean id="saleReader" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="sqlserver-dataSource"/>
+		<property name="sql" value="select distinct a.* from m_eina as a left join M_V_SITEARTICLE as c on a.MANDT = c.MANDT and left(SUBSTRING(a.MATNR, PATINDEX('%[^0]%', a.MATNR), LEN(a.MATNR)), 6) = RIGHT(c.MATNR, 6) and a.LIFNR = c.LIFNR "/>
+		<property name="verifyCursorPosition" value="1"/>
+		<property name="rowMapper">
+			<bean class="com.lsh.base.data.internal.SaleRowMapper"/>
+		</property>
+	</bean>
+
+	<bean id="DCsaleReader" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="sqlserver-dataSource"/>
+		<property name="sql" value="select distinct * from m_eina where lifnr='DC10'"/>
+		<property name="verifyCursorPosition" value="1"/>
+		<property name="rowMapper">
+			<bean class="com.lsh.base.data.internal.SaleDcRowMapper"/>
+		</property>
+	</bean>
+	<bean id="SiteArticleReader" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="sqlserver-dataSource"/>
+		<property name="sql" value="select WERKS,MATNR,LIFNR_INNER,PLIFZ,CDFLAG,MANDT from M_V_SITEARTICLE where MMSTA not in ('0','8','8A','9','10')"/>
+		<property name="verifyCursorPosition" value="1"/>
+		<property name="rowMapper">
+			<bean class="com.lsh.base.data.internal.SitearticleRowMapper"/>
+		</property>
+	</bean>
+	<bean id="SiteReader" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="sqlserver-dataSource"/>
+		<property name="sql" value="select distinct scagr,b.mandt,b.matnr,rbzul,prerf, bwscl,LIFNR_INNER,pprice, sprice from m_eina as a inner join M_V_SITEARTICLE as b on a.MANDT = b.MANDT and a.MATNR = b.MATNR and a.lifnr = b.lifnr where (a.MANDT='300' and b.werks='1450')or (a.MANDT='305' and b.werks='5012')or (a.MANDT='307' and b.werks='7001')"/>
+		<property name="verifyCursorPosition" value="1"/>
+		<property name="rowMapper">
+			<bean class="com.lsh.base.data.internal.SiteRowMapper"/>
+		</property>
+	</bean>
+	<bean id="CusarticleReader" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="sqlserver-dataSource"/>
+		<property name="sql" value="select a.*,b.mmsta from m_v_cusarticle a inner join m_v_sitearticle b on a.mandt=b.mandt and a.werks=b.werks and a.matnr=b.matnr"/>
+		<property name="verifyCursorPosition" value="1"/>
+		<property name="rowMapper">
+			<bean class="com.lsh.base.data.internal.CusarticleRowMapper"/>
+		</property>
+	</bean>
+	<bean id="SupplierReader" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="sqlserver-dataSource"/>
+		<property name="sql" value="select * from M_V_VENDER"/>
+		<property name="verifyCursorPosition" value="1"/>
+		<property name="rowMapper">
+			<bean class="com.lsh.base.data.internal.SupplierRowMapper"/>
+		</property>
+	</bean>
+	<bean id="ChangeReader" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="mysql-dataSource"/>
+		<property name="sql" value="select sku_id,market_id from item_ugroup_status where is_valid=1 and status!=1"/>
+		<property name="verifyCursorPosition" value="1"/>
+		<property name="rowMapper">
+			<bean class="com.lsh.base.data.internal.ChangeRowMapper"/>
+		</property>
+	</bean>
+	<bean id="OldReader" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="mysql-dataSource"/>
+		<property name="sql" value="select sku_id,market_id,id from item_sku where is_valid=1"/>
+		<property name="verifyCursorPosition" value="1"/>
+		<property name="rowMapper">
+			<bean class="com.lsh.base.data.internal.OldRowMapper"/>
+		</property>
+	</bean>
+	<bean id="OldSaleReader" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="mysql-dataSource"/>
+		<property name="sql" value="select sku_id,market_id,sup_no from item_sale where is_valid=1"/>
+		<property name="verifyCursorPosition" value="1"/>
+		<property name="rowMapper">
+			<bean class="com.lsh.base.data.internal.OldSaleRowMapper"/>
+		</property>
+	</bean>
+	<bean id="oldItemWriter" class="com.lsh.base.data.internal.OldItemWriter">
+		<property name="genVals" ref="genVals"/>
+	</bean>
+	<bean id="oldISaletemWriter" class="com.lsh.base.data.internal.OldSaleItemWriter">
+		<property name="genVals" ref="genVals"/>
+	</bean>
+	<bean id="changeItemWriter" class="com.lsh.base.data.internal.ChangeItemWriter">
+		<property name="genVals" ref="genVals"/>
+	</bean>
+	<bean id="articleWriter" class="com.lsh.base.data.internal.ArticleItemWriter">
+		<property name="articleWriteDao" ref="hibernateArticleDao"/>
+	</bean>
+	<bean id="articleProWriter" class="com.lsh.base.data.internal.ArticleItemWriter">
+		<property name="articleWriteDao" ref="hibernateArticleProDao"/>
+	</bean>
+	<bean id="saleWriter" class="com.lsh.base.data.internal.SaleItemWriter">
+		<property name="saleWriterDao" ref="hibernateSaleDao"/>
+	</bean>
+
+	<bean id="barcodeWriter" class="com.lsh.base.data.internal.BarcodeItemWriter">
+		<property name="barcodeItemWriteDao" ref="hibernateBarcodeItemDao"/>
+	</bean>
+	<bean id="delBarcodeWriter" class="com.lsh.base.data.internal.BarcodeItemWriter">
+		<property name="barcodeItemWriteDao" ref="delHibernateBarcodeItemDao"/>
+	</bean>
+
+	<bean id="hibernateBarcodeItemDao" class="com.lsh.base.data.internal.HibernateBarcodeItemDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+		<property name="genVals" ref="genVals"/>
+		<property name="jdbcTemplate" ref="jdbcTemplate"/>
+	</bean>
+	<bean id="delHibernateBarcodeItemDao" class="com.lsh.base.data.internal.HibernateDelBarcodeItemDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+		<property name="genVals" ref="genVals"/>
+		<property name="jdbcTemplate" ref="jdbcTemplate"/>
+	</bean>
+
+
+
+	<bean id="saleProWriter" class="com.lsh.base.data.internal.SaleItemWriter">
+		<property name="saleWriterDao" ref="hibernateSaleProDao"/>
+	</bean>
+	<bean id="DcsaleWriter" class="com.lsh.base.data.internal.SaleDcItemWriter">
+		<property name="saleDcWriterDao" ref="hibernateSaleDcDao"/>
+	</bean>
+	<bean id="siteArticleWriter" class="com.lsh.base.data.internal.SiteArticleItemWriter">
+		<property name="siteArticleWriterDao" ref="hibernateSiteArticleDao"/>
+	</bean>
+	<bean id="siteWriter" class="com.lsh.base.data.internal.SiteItemWriter">
+		<property name="siteWriterDao" ref="hibernateSiteNewDao"/>
+	</bean>
+	<bean id="siteProWriter" class="com.lsh.base.data.internal.SiteItemWriter">
+		<property name="siteWriterDao" ref="hibernateSiteProNewDao"/>
+	</bean>
+	<bean id="supplierItemWriter" class="com.lsh.base.data.internal.SupplierItemWriter">
+		<property name="supplierWriterDao" ref="hibernateSupplierDao"/>
+	</bean>
+	<bean id="cusarArticleWriter" class="com.lsh.base.data.internal.CusarArticleItemWriter">
+		<property name="cusarticleWriterDao" ref="hibernateCusarArticleDao"/>
+	</bean>
+	<bean id="saleUpdateWriter" class="com.lsh.base.data.internal.SaleUpdateItemWriter">
+		<property name="saleUpdateWriterDao" ref="hibernateSaleUpdateDao"/>
+	</bean>
+	<bean id="skuFileItemWriter" class="com.lsh.base.data.internal.SkuFileItemWriter">
+		<property name="skuFileWriteDao" ref="hibernateSkuFileDao"/>
+	</bean>
+	<bean id="deliveryItemWriter" class="com.lsh.base.data.internal.DeliveryItemWriter">
+		<property name="deliveryWriterDao" ref="hibernateDeliveryDao"/>
+	</bean>
+	<bean id="ugroupUpdateFileItemWriter" class="com.lsh.base.data.internal.UgroupFileItemWriter">
+		<property name="ugroupFileWriteDao" ref="hibernateUgroupDao"/>
+	</bean>
+	<bean id="packSizeFileItemWriter" class="com.lsh.base.data.internal.PackSizeFileItemWriter">
+		<property name="packSizeFileWriteDao" ref="hibernatePackSizeDao"/>
+	</bean>
+	<bean id="hibernateArticleDao" class="com.lsh.base.data.internal.HibernateArticleDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+		<property name="genVals" ref="genVals"/>
+		<property name="jdbcTemplate" ref="jdbcTemplate"/>
+	</bean>
+	<bean id="hibernateArticleProDao" class="com.lsh.base.data.internal.HibernateArticleProDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+		<property name="jdbcTemplate" ref="jdbcTemplate"/>
+		<property name="genVals" ref="genVals"/>
+	</bean>
+	<bean id="hibernateSaleDao" class="com.lsh.base.data.internal.HibernateSaleWriterDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+		<property name="genVals" ref="genVals"/>
+		<property name="jdbcTemplate" ref="jdbcTemplate"/>
+	</bean>
+	<bean id="hibernateSaleProDao" class="com.lsh.base.data.internal.HibernateSaleProWriterDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+		<property name="jdbcTemplate" ref="jdbcTemplate"/>
+	</bean>
+	<bean id="genVals" class="com.lsh.base.data.utils.GenVals">
+		<property name="redisTemplate" ref="redisTemplate"/>
+	</bean>
+	<bean id="hibernateSaleDcDao" class="com.lsh.base.data.internal.HibernateSaleDcWriterDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<bean id="hibernateSiteArticleDao" class="com.lsh.base.data.internal.HibernateSiteWriterDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<bean id="hibernateCusarArticleDao" class="com.lsh.base.data.internal.HibernateCusarWriterDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<bean id="hibernateSaleUpdateDao" class="com.lsh.base.data.internal.HibernateSaleUpdateWriterDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<bean id="hibernateSupplierDao" class="com.lsh.base.data.internal.HibernateSupplierWriterDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<bean id="hibernateSiteNewDao" class="com.lsh.base.data.internal.HibernateSiteNewWriterDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+		<property name="genVals" ref="genVals"/>
+		<property name="jdbcTemplate" ref="jdbcTemplate"/>
+	</bean>
+	<bean id="hibernateSiteProNewDao" class="com.lsh.base.data.internal.HibernateSiteNewProWriterDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+		<property name="genVals" ref="genVals"/>
+		<property name="jdbcTemplate" ref="jdbcTemplate"/>
+	</bean>
+	<bean id="hibernateSkuFileDao" class="com.lsh.base.data.internal.HibernateSkuFileDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<bean id="hibernateDeliveryDao" class="com.lsh.base.data.internal.HibernateDeliveryDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<bean id="hibernateUgroupDao" class="com.lsh.base.data.internal.HibernateUgroupWriterDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<bean id="hibernatePackSizeDao" class="com.lsh.base.data.internal.HibernatePackSizeWriterDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<bean id="kafkaProducer" class="com.lsh.base.data.jira.KafkaProducer"/>
+
+	<bean id="logMonitoringNotifier" class="com.lsh.base.data.internal.monitor.LogMonitoringNotifier"/>
+
+	<bean id="emailMonitoringNotifier" class="com.lsh.base.data.internal.monitor.EmailMonitoringNotifier"/>
+
+	<bean id="monitoringJobListener" class="com.lsh.base.data.internal.monitor.MonitoringExecutionListener">
+		<property name="monitoringNotifier" ref="emailMonitoringNotifier"/>
+	</bean>
+
+	<batch:job id="updateSkuJob">
+		<batch:step id="saveArticle">
+			<batch:tasklet>
+				<batch:chunk reader="articleReader" writer="articleWriter" commit-interval="300"/>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	<batch:job id="updateSkuProJob">
+		<batch:step id="getChangePro" next="updateSkuPro">
+			<batch:tasklet>
+				<batch:chunk reader="ChangeReader" writer="changeItemWriter" commit-interval="100"/>
+			</batch:tasklet>
+		</batch:step>
+		<batch:step id="updateSkuPro">
+			<batch:tasklet>
+				<batch:chunk reader="articleReader" writer="articleProWriter" commit-interval="1000"/>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	<batch:job id="updateSaleJob">
+		<batch:step id="saveSale">
+			<batch:tasklet>
+				<batch:chunk reader="saleReader" writer="saleWriter" commit-interval="300"/>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	<batch:job id="updateSiteJob">
+		<batch:step id="saveSite">
+			<batch:tasklet>
+				<batch:chunk reader="SiteArticleReader" writer="siteArticleWriter" commit-interval="1000"/>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	<batch:job id="updateCusarJob">
+		<batch:step id="saveCusar">
+			<batch:tasklet>
+				<batch:chunk reader="CusarticleReader" writer="cusarArticleWriter" commit-interval="100"/>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	<batch:job id="updateSaleParam">
+		<batch:step id="updateSale">
+			<batch:tasklet>
+				<batch:chunk reader="saleParamReader" writer="saleUpdateWriter" commit-interval="300"/>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	<batch:job id="updateSupplier">
+		<batch:step id="saveSupplier">
+			<batch:tasklet>
+				<batch:chunk reader="SupplierReader" writer="supplierItemWriter" commit-interval="300"/>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	<batch:job id="insertSaleJob">
+		<batch:step id="insertSale">
+			<batch:tasklet>
+				<batch:chunk reader="SiteReader" writer="siteWriter" commit-interval="300"/>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	<!--<batch:job id="updateSkuFileJob">-->
+		<!--<batch:step id="updateSkuFile">-->
+			<!--<batch:tasklet>-->
+				<!--<batch:chunk reader="fileItemReader" writer="skuFileItemWriter" commit-interval="300"/>-->
+			<!--</batch:tasklet>-->
+		<!--</batch:step>-->
+	<!--</batch:job>-->
+
+	<batch:job id="updateDeliveryJob">
+		<batch:step id="updateDelivery">
+			<batch:tasklet>
+				<batch:chunk reader="deliveryReader" writer="deliveryItemWriter" commit-interval="1000"/>
+			</batch:tasklet>
+		</batch:step>
+		<batch:listeners>
+			<batch:listener ref="monitoringJobListener"/>
+		</batch:listeners>
+	</batch:job>
+	<!--<batch:job id="updateUgroupShelfJob">-->
+		<!--<batch:step id="updateUgroup">-->
+			<!--<batch:tasklet>-->
+				<!--<batch:chunk reader="ugroupUpdateItemReader" writer="ugroupUpdateFileItemWriter" commit-interval="100"/>-->
+			<!--</batch:tasklet>-->
+		<!--</batch:step>-->
+	<!--</batch:job>-->
+	<!--<batch:job id="updateskuPackJob">-->
+		<!--<batch:step id="updateskuPack">-->
+			<!--<batch:tasklet>-->
+				<!--<batch:chunk reader="packSizeFileItemReader" writer="packSizeFileItemWriter" commit-interval="100"/>-->
+			<!--</batch:tasklet>-->
+		<!--</batch:step>-->
+	<!--</batch:job>-->
+	<batch:job id="insertDCSaleJob">
+		<batch:step id="insertDCSale">
+			<batch:tasklet>
+				<batch:chunk reader="DCsaleReader" writer="DcsaleWriter" commit-interval="100"/>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	<batch:job id="updateSkuJobs">
+		<batch:step id="getChange" next="getOld">
+			<batch:tasklet>
+				<batch:chunk reader="ChangeReader" writer="changeItemWriter" commit-interval="100"/>
+			</batch:tasklet>
+		</batch:step>
+		<batch:step id="getOld" next="updateSku">
+			<batch:tasklet>
+				<batch:chunk reader="OldReader" writer="oldItemWriter" commit-interval="100"/>
+			</batch:tasklet>
+		</batch:step>
+		<batch:step id="updateSku" >
+			<batch:tasklet>
+				<batch:chunk reader="articleReader" writer="articleWriter" commit-interval="300"/>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	<batch:job id="updateSaleJobs">
+		<batch:step id="genChange" next="genOld">
+			<batch:tasklet>
+				<batch:chunk reader="ChangeReader" writer="changeItemWriter" commit-interval="100"/>
+			</batch:tasklet>
+		</batch:step>
+		<batch:step id="genOld" next="updateSales">
+			<batch:tasklet>
+				<batch:chunk reader="OldSaleReader" writer="oldISaletemWriter" commit-interval="100"/>
+			</batch:tasklet>
+		</batch:step>
+		<batch:step id="updateSales">
+			<batch:tasklet>
+				<batch:chunk reader="saleReader" writer="saleWriter" commit-interval="300"/>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	<batch:job id="updateBarcodeJobs">
+		<batch:step id="insertBarcode" next="delBarcode">
+			<batch:tasklet>
+				<batch:chunk reader="barcodeReader" writer="barcodeWriter" commit-interval="100"/>
+			</batch:tasklet>
+		</batch:step>
+		<batch:step id="delBarcode" >
+			<batch:tasklet>
+				<batch:chunk reader="delBarcodeReader" writer="delBarcodeWriter" commit-interval="100"/>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	<batch:job id="updateSiteJobs">
+		<batch:step id="genInnChange" next="updateSites">
+			<batch:tasklet>
+				<batch:chunk reader="ChangeReader" writer="changeItemWriter" commit-interval="100"/>
+			</batch:tasklet>
+		</batch:step>
+		<batch:step id="updateSites">
+			<batch:tasklet>
+				<batch:chunk reader="SiteReader" writer="siteWriter" commit-interval="300"/>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	<batch:job id="updateSaleProJobs">
+		<batch:step id="updateSalePro">
+			<batch:tasklet>
+				<batch:chunk reader="saleReader" writer="saleProWriter" commit-interval="300"/>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	<batch:job id="updateSkuProJobs">
+		<batch:step id="updateSkuProUpdate">
+			<batch:tasklet>
+				<batch:chunk reader="articleReader" writer="articleProWriter" commit-interval="300"/>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	<batch:job id="updateSiteProJobs">
+		<batch:step id="updateSiteProUpdate">
+			<batch:tasklet>
+				<batch:chunk reader="SiteReader" writer="siteProWriter" commit-interval="300"/>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+
+
+</beans>
+
+
+

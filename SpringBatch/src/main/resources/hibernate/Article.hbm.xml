@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.lsh.base.data.bean"><!-- 这里的package记得要写对啊。要不然运行也会出错的 -->
+    <class name="Article" table="item_sku" ><!-- 如果表名跟类名一个样的话，那么table属性可以不写 -->
+        <id name="id" >
+            <column name="id"/>
+            <generator class="identity"/>
+        </id>
+        <property name="skuId" column="sku_id"/>
+        <property name="marketId" column="market_id"/>
+        <property name="brand" column="brand"/>
+        <property name="name" column="name"/>
+        <property name="tax" column="tax"/>
+        <property name="barcode" column="barcode"/>
+        <property name="topCat" column="top_cat"/>
+        <property name="secondCat" column="second_cat"/>
+        <property name="thirdCat" column="third_cat"/>
+        <property name="properties" column="properties" type="text"/>
+        <property name="isValid" column="is_valid"/>
+        <property name="status" column="status"/>
+        <property name="createdBy" column="created_by"/>
+        <property name="createAt" column="created_at"/>
+        <property name="picUrl" column="pic_url"/>
+        <property name="isOld" column="is_old"/>
+        <property name="updatedBy" column="updated_by"/>
+        <property name="updatedAt" column="updated_at"/>
+    </class>
+</hibernate-mapping>

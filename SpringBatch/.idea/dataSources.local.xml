@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="MySQL - lsh_wms@192.168.60.48" uuid="2714f387-358a-4645-968d-b732164e5b14">
+      <secret-storage>master_key</secret-storage>
+      <user-name>root</user-name>
+      <schema-pattern>gogs.*</schema-pattern>
+      <default-schemas>gogs.*</default-schemas>
+    </data-source>
+  </component>
+</project>
